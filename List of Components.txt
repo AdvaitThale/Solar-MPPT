@@ -1,0 +1,66 @@
+
+Solar Power Unit (MPPT)
+
+exactly refer ECOFLOW DELTA PRO or BLUETTI POWER SYSTEM
+
+Multiple wifi controlled outputs as TBlock connectors for warm white lighting,etc
+ 
+ESP8266
+LCD for display and control (wake pin for low power mode - turn off lcd) Or Use OLED 
+Refer Bluetti and purgola video
+
+WiFi:
+-power generated (Incoming)
+-power consumed (Outgoing)
+-outdoor and indoor temp (2 x PT-100)
+-status
+-battery health (if any)
+-tacticle button/s control for display config 
+-USB control for fairy lights
+-7 Seg Display for maintenance purpose >>> Err, F, combination byte shift using single pin of uC
+-RS232 interface
+
+
+
+Max. current RED alert (CURRENT OVERSHOOT)
+XT60 Male (inside the unit) and Female (from Solar panels)
+Fuse 30A (fuse holder-30mm)
+
+Research about BUSBAR
+
+*DC to AC Pure Sine wave inverter*
+IC4047 multivibrator
+irfz44
+12-0-12 to 240V transformer
+
+
+
+
+
+Shopping links:
+
+XT90E-M Battery Plug Gold-Plated Male Connector:
+(The XT90E-Mis completely compatible with original XT60 connectors so you can use them straight away)
+
+https://roboticsdna.in/product/xt90e-m-battery-plug-gold-plated-male-connector-black/?src=google&kwd=&adgroup={adgroup}&device=c&campaign={campaign}&adgroup={adgroup}&keyword=&matchtype=&gclid=CjwKCAiA2fmdBhBpEiwA4CcHzcqQUSdea6Bs01_OV3jPHbGntjlg4xlgJibYuFLUYpYIvesG-jrNlBoCXkUQAvD_BwE
+
+
+XT60 Male-Female Connector Pair:
+
+https://www.electronicscomp.com/xt60-male-female-connector-pair-for-lipo-battery?gclid=CjwKCAiA2fmdBhBpEiwA4CcHzZe8jf5j6MPvWggEp27nw9inDFYbvUZU1jhDKzL9b61Of4OWsK41YRoC7zIQAvD_BwE
+
+
+Fuse Holder - 30mm:
+
+https://www.electronicscomp.com/fuse-holder-30mm?gclid=CjwKCAiA2fmdBhBpEiwA4CcHzcTed_895TpzA2bB7A1jLGQ6otj4QQ0uNoP5jP3hTqBwooX9yHXY4BoCNFsQAvD_BwE
+
+
+(IF NECESSARY) 
+DC 5V 3010 Cooling Fan - 30x30x10 mm Size:
+
+https://www.electronicscomp.com/dc-5v-3010-cooling-fan-30x30x10-mm-size
+
+
+4 Inch Fan Grill - 120mm:
+
+https://www.electronicscomp.com/4-inch-fan-grill-120mm
