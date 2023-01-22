@@ -8,6 +8,7 @@ Multiple wifi controlled outputs as TBlock connectors for warm white lighting,et
 ESP8266
 LCD for display and control (wake pin for low power mode - turn off lcd) Or Use OLED 
 Refer Bluetti and purgola video
+DIP switch for Buzzer and other circuits
 
 WiFi:
 -power generated (Incoming)
