@@ -1,7 +1,23 @@
 /*
+  Author: Advait Thale
 
+  *************************************************************************************************
+                                     MPPT_PORT-328P
+  *************************************************************************************************
+
+  This test code is an overview of how MPPT works on the port of ATMega328P.
+  It is equipped with 20*4 Character LCD (for device & energy status), Function
+  Buttons, ATMega328P Microcontroller, Solar Inlet, 30A FUSE, Sleep Mode, 
+  2 x PT-100(for Indoor & Outdoor Temp.), RS-232 Interface(at 9600),Program 
+  Serial(at 115200), Internal DIP Switches (for system configuration), Relay 
+  driven Outputs(for automation purpose), I/O for interfacing external 
+  sensors and automation purpose.
+  The live status is displayed on LCD as well as the data log can be viewed via 
+  both RS-232 (DB9) or USB A Serial ports. Refer README.md and attached datasheets 
+  for furthur details on MPPT.
+  
   **************************************************************************************************
-  *                                   ESP32 PINOUT                                       *
+  *                                        ESP32 PINOUT                                            *
   **************************************************************************************************
 
                                3V3 |*|                       |*| 5V
