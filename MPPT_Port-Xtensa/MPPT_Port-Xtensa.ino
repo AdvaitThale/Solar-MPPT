@@ -1,22 +1,38 @@
 /*
+  Author: Advait Thale
 
+  *************************************************************************************************
+                                         MPPT_PORT-Xtensa
+  *************************************************************************************************
+
+  This test code is an overview of how MPPT works on the port of ATMega328P.
+  It is equipped with 20*4 Character LCD (for device & energy status), Function
+  Buttons, ESP32 Microcontroller, Solar Inlet, 30A FUSE, Sleep Mode, Webserver, 
+  2 x PT-100(for Indoor & Outdoor Temp.), RS-232 Interface(at 9600),Program 
+  Serial(at 115200), Internal DIP Switches (for system configuration), Relay 
+  driven Outputs(for automation purpose), I/O for interfacing external 
+  sensors and automation purpose.
+  The live status is displayed on LCD, the Webserver(at 192.168.1.1) as well as 
+  the data log can be viewed via both RS-232 (DB9) or USB A Serial ports. Refer 
+  README.md and attached datasheets for furthur details on MPPT.
+  
   **************************************************************************************************
-  *                                            ESP32 PINOUT                                        *
+  *                                        ESP32 PINOUT                                            *
   **************************************************************************************************
 
                                3V3 |*|                       |*| 5V
                                GND |*|                       |*| GND
-                               IR  |*| GPIO15         GPIO13 |*| C.START/STOP
-                               CUR |*| GPIO02         GPIO12 |*| 
+                               IR  |*| GPIO15         GPIO13 |*| C.START
+                               CUR |*| GPIO02         GPIO12 |*| C.STOP
                     AMB TEMP / HUM |*| GPIO04         GPIO14 |*| ALARM
-                            L.TRIG |*| GPIO16         GPIO27 |*| 
+                            L.TRIG |*| GPIO16         GPIO27 |*| P.COUNT
                             L.ECHO |*| GPIO17         GPIO26 |*|  -
                               BUZZ |*| GPIO05         GPIO25 |*| RELAY 
                                 -  |*| GPIO18         GPIO33 |*| RELAY 
                                 -  |*| GPIO19         GPIO32 |*| RELAY 
                                SDA |*| GPIO21         GPIO35 |*| RELAY 
-                               RX  |*| GPIO03         GPIO34 |*| PT-100 (Indoor)
-                               TX  |*| GPIO01         GPIO39 |*| PT-100 (Outdoor)
+                               RX  |*| GPIO03         GPIO34 |*| PT-100
+                               TX  |*| GPIO01         GPIO39 |*| FLOW
                                SCL |*| GPIO22         GPIO36 |*| PRES
                                 -  |*| GPIO23           EN   |*|  - 
                                 
