@@ -22,17 +22,17 @@
 
                                3V3 |*|                       |*| 5V
                                GND |*|                       |*| GND
-                               IR  |*| GPIO15         GPIO13 |*| C.START
-                               CUR |*| GPIO02         GPIO12 |*| C.STOP
-                    AMB TEMP / HUM |*| GPIO04         GPIO14 |*| ALARM
-                            L.TRIG |*| GPIO16         GPIO27 |*| P.COUNT
-                            L.ECHO |*| GPIO17         GPIO26 |*|  -
+                               IR  |*| GPIO15         GPIO13 |*| C.START/STOP
+                               CUR |*| GPIO02         GPIO12 |*| ALARM
+                    AMB TEMP / HUM |*| GPIO04         GPIO14 |*| 
+                                   |*| GPIO16         GPIO27 |*| 
+                                   |*| GPIO17         GPIO26 |*|  -
                               BUZZ |*| GPIO05         GPIO25 |*| RELAY 
                                 -  |*| GPIO18         GPIO33 |*| RELAY 
                                 -  |*| GPIO19         GPIO32 |*| RELAY 
                                SDA |*| GPIO21         GPIO35 |*| RELAY 
-                               RX  |*| GPIO03         GPIO34 |*| PT-100
-                               TX  |*| GPIO01         GPIO39 |*| FLOW
+                               RX  |*| GPIO03         GPIO34 |*| PT-100(I)
+                               TX  |*| GPIO01         GPIO39 |*| PT-100(O)
                                SCL |*| GPIO22         GPIO36 |*| PRES
                                 -  |*| GPIO23           EN   |*|  - 
                                 
