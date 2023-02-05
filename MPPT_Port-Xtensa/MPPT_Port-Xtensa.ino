@@ -94,7 +94,6 @@ void setup() {
   Wire.write(0x6B);                       // Power Management Register (PWR_MGMT_1)
   Wire.write(0);                          // Wake up IMU
   Wire.endTransmission(true);             // End transmission to I2C slave
-
 }
 
 
