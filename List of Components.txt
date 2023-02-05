@@ -1,4 +1,12 @@
 
+**************************************************************************************************
+
+					Maximum Power Point Tracker with Low EMI Quasi-Resonant 
+					Topology added to Hardware controlled 240V AC opto-isolated 
+					outputs and function driven status display
+
+**************************************************************************************************
+
 Solar Power Unit (MPPT)
 
 exactly refer ECOFLOW DELTA PRO or BLUETTI POWER SYSTEM
@@ -8,7 +16,6 @@ Multiple wifi controlled outputs as TBlock connectors for warm white lighting,et
 ESP8266
 LCD for display and control (wake pin for low power mode - turn off lcd) Or Use OLED 
 Refer Bluetti and purgola video
-DIP switch for Buzzer and other circuits
 
 WiFi:
 -power generated (Incoming)
@@ -21,7 +28,9 @@ WiFi:
 -7 Seg Display for maintenance purpose >>> Err, F, combination byte shift using single pin of uC
 -RS232 interface
 
-
+DIP switch seperate breakout board angled @ 90^
+LCD I2C jumper and vcc for 2xDIP control
+LCD breakout board along with function buttons locked relimate connector
 
 Max. current RED alert (CURRENT OVERSHOOT)
 XT60 Male (inside the unit) and Female (from Solar panels)
