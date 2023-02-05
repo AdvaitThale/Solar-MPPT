@@ -1,5 +1,8 @@
 /*
   Author: Advait Thale
+  Board: ESP32 Dev Module
+  Baud: 115200
+  Flash Freq: 80MHz
 
   *************************************************************************************************
                                          MPPT_PORT-Xtensa
@@ -56,8 +59,8 @@
 
 
 #include <math.h>               // Math Functions
-#include <ACS712.h>             // ACS712 Functions                        
-#include <dht.h>                // Ambient Temperature/Humidity Functions     
+//#include <ACS712.h>             // ACS712 Functions                        
+#include <DHT.h>                // Ambient Temperature/Humidity Functions     
 #include <Wire.h>               // For communication with I2C devices
 #include <LiquidCrystal_I2C.h>
 
@@ -65,15 +68,15 @@
 #define TRIG 16
 #define ECHO 17
 #define DHTPIN 4
-#define BUZZ 11
+#define BUZZ 5
 #define dt  2000
 
-
+int play = 0;
 float BYTA, BYTAT, BYTT, BYTL, BYTP, BYTF, BYTR, BYTI, BYTN, BYTH, BYTX, BYTY, BYTZ, THLD1, THLD2;
 long DUR;
 
-dht DHT;
-ACS712 sensor(ACS712_05B, 2);
+//dht DHT;
+//ACS712 sensor(ACS712_05B, 2);
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void setup() {
@@ -91,10 +94,41 @@ void setup() {
   Wire.write(0x6B);                       // Power Management Register (PWR_MGMT_1)
   Wire.write(0);                          // Wake up IMU
   Wire.endTransmission(true);             // End transmission to I2C slave
-  ACS_Calibrate();                        // Calibrate ACS
+
 }
 
 
 void loop() {
-  LCDPRINT(F_BYTT, F_BYTI);
+  
+}
+
+void tone(byte pin, int freq){
+  ledcSetup(0, 2000, 8);
+  ledcAttachPin(pin, 0);
+  ledcWriteTone(0, freq);
+  play = pin;
+}
+
+void noTone(){
+  tone(play,0);
+}
+
+void initial()
+{
+  lcd.setCursor(3, 0);
+  lcd.print("DIGI-SENSE");
+  lcd.setCursor(0, 1);
+  lcd.print("----------------");
+  Serial.println("Starting DIGI-SENSE...");
+  digitalWrite(BUZZ, HIGH);
+  delay(85);
+  digitalWrite(BUZZ, LOW);
+  tone(BUZZ, 4093);
+  delay(200);
+  noTone();
+  digitalWrite(BUZZ, HIGH);
+  delay(100);
+  digitalWrite(BUZZ, LOW);
+  delay(dt);
+  lcd.clear();
 }
