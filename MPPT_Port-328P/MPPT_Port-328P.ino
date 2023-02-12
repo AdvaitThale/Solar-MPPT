@@ -71,19 +71,19 @@
 
 long DUR;
 float BYTA, BYTAT, BYTT, BYTL, BYTP, BYTF, BYTR, BYTI, BYTN, BYTH, BYTX, BYTY, BYTZ, THLD1, THLD2;
-byte customChar[] = {0x04, 0x0C, 0x1C, 0x1F, 0x1F, 0x07, 0x06, 0x04};
+byte charge[13] = {0x04, 0x0C, 0x1C, 0x1F, 0x1F, 0x07, 0x06, 0x04};
 
 
 dht DHT;
 ACS712 sensor(ACS712_05B, 2);
-LiquidCrystal_I2C lcd(0x27, 16, 2);
+LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 void setup() {
   pinMode(CUR, INPUT);                    // ADC Pin for ACS712
   pinMode(TRIG, OUTPUT);                  // TRIGGER Pin of HC-SR05 to Write
   pinMode(ECHO, INPUT);                   // ECHO Pin of HC-SR05 to Read
   pinMode(BUZZ, OUTPUT);                  // Buzzer Pin for Beeps
-  pinMode(DHTPIN, INPUT);                 //DHT11 Pin as Input
+  pinMode(DHTPIN, INPUT);                 // DHT11 Pin as Input
   Serial.begin(9600);                     // Compensated Baud to 9600 for RS-232
   lcd.init();                             // LCD Initialise
   lcd.backlight();                        // LCD Backlight ON
@@ -93,22 +93,33 @@ void setup() {
   Wire.write(0x6B);                       // Power Management Register (PWR_MGMT_1)
   Wire.write(0);                          // Wake up IMU
   Wire.endTransmission(true);             // End transmission to I2C slave
-   
+
 }
 
 
 void loop() {
-  lcd.begin();
-  lcd.createChar(0, customChar);
-  lcd.home();
-  lcd.write(0);
+  lcd.createChar(13, charge);
+  lcd.setCursor(0, 0);
+  lcd.write(byte(13));
 }
 
-void initial(){
-  lcd.begin();
-  lcd.createChar(0, customChar);
-  lcd.home();
-  lcd.write(0);
+void initial() {
+  lcd.setCursor(3, 0);
+  lcd.print("MPPT");
+  lcd.setCursor(0, 1);
+  lcd.print("----------------");
+  Serial.println("Initializing MPPT...");
+  digitalWrite(BUZZ, HIGH);
+  delay(85);
+  digitalWrite(BUZZ, LOW);
+  tone(BUZZ, 4093);
+  delay(200);
+  noTone();
+  digitalWrite(BUZZ, HIGH);
+  delay(100);
+  digitalWrite(BUZZ, LOW);
+  delay(dt);
+  lcd.clear();
 }
 
 
@@ -138,7 +149,7 @@ LiquidCrystal_I2C lcd(0x3F, 16, 2);
 
 
 void setup() {
- 
+
 }
 
 void loop() { }
