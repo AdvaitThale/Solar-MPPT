@@ -115,10 +115,10 @@ void noTone(){
 void initial()
 {
   lcd.setCursor(3, 0);
-  lcd.print("DIGI-SENSE");
+  lcd.print("MPPT");
   lcd.setCursor(0, 1);
   lcd.print("----------------");
-  Serial.println("Starting DIGI-SENSE...");
+  Serial.println("Initializing MPPT...");
   digitalWrite(BUZZ, HIGH);
   delay(85);
   digitalWrite(BUZZ, LOW);
