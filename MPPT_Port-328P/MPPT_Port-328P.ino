@@ -46,19 +46,18 @@
   BYTN      Count                        N(Discrete Number)
   BYTO      Outdoor Temperature          C(Degree Celcius)
   BYTI      Current (AC/DC) upto 5A      A(Ampere)
-  BYTI      Indoor Temperature           C(Degree Celcius)
-  BYTL      Coolant Level                CM(Centimetre)
-  BYTP      Ambient Pressure             Bar (= 100,000kPA)
+  BYTT      Indoor Temperature           C(Degree Celcius)
+  BYTL      Load Power                   W(Watts)
+  BYTP      Power                        W(Watts)
+  BYTS      Generated(Solar) Power       W(Watts)
   BYTH      Humidity                     Percentage
-  BYTX      Vibration *(if any)          mm(millimetres)
 
 */
 
-
-#include <math.h>               // Math Functions
-#include <ACS712.h>             // ACS712 Functions                        
-#include <dht.h>                // Ambient Temperature/Humidity Functions     
-#include <Wire.h>               // For communication with I2C devices
+#include <math.h>   // Math Functions
+#include <ACS712.h> // ACS712 Functions
+#include <dht.h>    // Ambient Temperature/Humidity Functions
+#include <Wire.h>   // For communication with I2C devices
 #include <LiquidCrystal_I2C.h>
 
 #define CUR 2
@@ -66,44 +65,57 @@
 #define ECHO 17
 #define DHTPIN 4
 #define BUZZ 11
-#define dt  2000
-
+#define dt 2000
 
 long DUR;
-float BYTA, BYTAT, BYTT, BYTL, BYTP, BYTF, BYTR, BYTI, BYTN, BYTH, BYTX, BYTY, BYTZ, THLD1, THLD2;
+float BYTA, BYTT, BYTO, BYTL, BYTP, BYTS, BYTR, BYTI, BYTN, BYTH, BYTX, THLD1, THLD2;
 byte charge[13] = {0x04, 0x0C, 0x1C, 0x1F, 0x1F, 0x07, 0x06, 0x04};
-
 
 dht DHT;
 ACS712 sensor(ACS712_05B, 2);
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
-void setup() {
-  pinMode(CUR, INPUT);                    // ADC Pin for ACS712
-  pinMode(TRIG, OUTPUT);                  // TRIGGER Pin of HC-SR05 to Write
-  pinMode(ECHO, INPUT);                   // ECHO Pin of HC-SR05 to Read
-  pinMode(BUZZ, OUTPUT);                  // Buzzer Pin for Beeps
-  pinMode(DHTPIN, INPUT);                 // DHT11 Pin as Input
-  Serial.begin(9600);                     // Compensated Baud to 9600 for RS-232
-  lcd.init();                             // LCD Initialise
-  lcd.backlight();                        // LCD Backlight ON
-  initial();                              // Device Start Configuration
-  Wire.begin();                           // Initiate wire lib. and I2C
-  Wire.beginTransmission(0x68);           // Start transmission to 0x68(MPU)
-  Wire.write(0x6B);                       // Power Management Register (PWR_MGMT_1)
-  Wire.write(0);                          // Wake up IMU
-  Wire.endTransmission(true);             // End transmission to I2C slave
-
+void setup()
+{
+  pinMode(CUR, INPUT);          // ADC Pin for ACS712
+  pinMode(TRIG, OUTPUT);        // TRIGGER Pin of HC-SR05 to Write
+  pinMode(ECHO, INPUT);         // ECHO Pin of HC-SR05 to Read
+  pinMode(BUZZ, OUTPUT);        // Buzzer Pin for Beeps
+  pinMode(DHTPIN, INPUT);       // DHT11 Pin as Input
+  Serial.begin(9600);           // Compensated Baud to 9600 for RS-232
+  lcd.init();                   // LCD Initialise
+  lcd.backlight();              // LCD Backlight ON
+  initial();                    // Device Start Configuration
+  Wire.begin();                 // Initiate wire lib. and I2C
+  Wire.beginTransmission(0x68); // Start transmission to 0x68(MPU)
+  Wire.write(0x6B);             // Power Management Register (PWR_MGMT_1)
+  Wire.write(0);                // Wake up IMU
+  Wire.endTransmission(true);   // End transmission to I2C slave
 }
 
-
-void loop() {
+void loop()
+{
+  lcd.setCursor(0, 0); //(C, R)
+  lcd.print("SOLAR:");
+  lcd.setCursor(6, 0);
+  lcd.print("89W");
+  lcd.setCursor(11, 0);
+  lcd.print("LOAD:");
+  lcd.setCursor(16, 0);
+  lcd.print("22W");
+  lcd.setCursor(0, 1);
+  lcd.print("BAT:");
   lcd.createChar(13, charge);
-  lcd.setCursor(0, 0);
+  lcd.setCursor(5, 1);
   lcd.write(byte(13));
+  lcd.setCursor(6, 1);
+  lcd.print("67%");
+  lcd.setCursor(9, 1);
+  lcd.print("2H 21M");
 }
 
-void initial() {
+void initial()
+{
   lcd.setCursor(3, 0);
   lcd.print("MPPT");
   lcd.setCursor(0, 1);
@@ -121,35 +133,3 @@ void initial() {
   delay(dt);
   lcd.clear();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#include <Wire.h>
-#include <LiquidCrystal_I2C.h>
-
-// Set the LCD address to 0x27 in PCF8574 by NXP and Set to 0x3F in PCF8574A by Ti
-LiquidCrystal_I2C lcd(0x3F, 16, 2);
-
-
-
-void setup() {
-
-}
-
-void loop() { }
