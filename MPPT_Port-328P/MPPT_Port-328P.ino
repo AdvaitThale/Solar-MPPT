@@ -21,17 +21,17 @@
   **************************************************************************************************
 
                               BUZZ |*| D13         D12 |*| C.START
-                               3V3 |*|             D11 |*| 
-                               GND |*| AREF        D10 |*| 
+                               3V3 |*|             D11 |*|
+                               GND |*| AREF        D10 |*|
                                CUR |*| A0           D9 |*| RELAY
                                    |*| A1           D8 |*| RELAY
-                         PT-100(I) |*| A2           D7 |*| 
+                         PT-100(I) |*| A2           D7 |*|
                          PT-100(O) |*| A3           D6 |*|  -
                                SDA |*| A4           D5 |*| CURRENT
                                SCL |*| A5           D4 |*| AMB TEMP / HUM
-                                -  |*| A6           D3 |*| 
-                                -  |*| A7           D2 |*| 
-                                   |*| 5V          GND |*| 
+                                -  |*| A6           D3 |*|
+                                -  |*| A7           D2 |*|
+                                   |*| 5V          GND |*|
                                    |*| RST         RST |*|  -
                                    |*| GND         RX0 |*|  TX
                                 -  |*| VIN         TX0 |*|  RX
@@ -67,6 +67,8 @@
 long DUR;
 float BYTA, BYTB, BYTI, BYTO, BYTT, BYTL, BYTP, BYTS, BYTH, THLD1, THLD2;
 byte charge[13] = {0x04, 0x0C, 0x1C, 0x1F, 0x1F, 0x07, 0x06, 0x04};
+byte error[14] = {0x00, 0x0E, 0x13, 0x17, 0x1D, 0x19, 0x0E, 0x00};
+byte restore[15] = {0x00, 0x0D, 0x13, 0x17, 0x10, 0x10, 0x0E, 0x00};
 
 //dht DHT;
 //ACS712 sensor(ACS712_05B, 2);
@@ -139,10 +141,10 @@ void alarm() {
   lcd.print("THRESHOLD");
   lcd.setCursor(3, 1);
   lcd.print("EXCEEDED!!");
-  tone(BUZZ,3000);
+  tone(BUZZ, 3000);
   delay(500);
   lcd.backlight();
-  tone(BUZZ,500);
+  tone(BUZZ, 500);
   delay(500);
   lcd.noBacklight();
   lcd.setCursor(3, 0);
