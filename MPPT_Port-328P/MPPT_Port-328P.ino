@@ -60,8 +60,8 @@
 #include <LiquidCrystal_I2C.h>
 
 #define CUR 2
-#define DHTPIN 4
-#define BUZZ 11
+#define DHTPIN 5
+#define BUZZ 4
 #define dt 2000
 
 long DUR;
