@@ -62,6 +62,7 @@
 #define CUR 2
 #define DHTPIN 5
 #define BUZZ 4
+#define LED 2
 #define dt 2000
 
 long DUR;
@@ -74,12 +75,17 @@ byte restore[15] = {0x00, 0x0D, 0x13, 0x17, 0x10, 0x10, 0x0E, 0x00};
 //ACS712 sensor(ACS712_05B, 2);
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
+void ISR(){
+  digitalWrite();
+}
+
 void setup()
 {
   pinMode(CUR, INPUT);          // ADC Pin for ACS712
   pinMode(BUZZ, OUTPUT);        // Buzzer Pin for Beeps
   pinMode(DHTPIN, INPUT);       // DHT11 Pin as Input
   Serial.begin(9600);           // Compensated Baud to 9600 for RS-232
+  attachInterrupt(ISR, RISING, 0); // Attach Interrupt
   lcd.init();                   // LCD Initialise
   lcd.backlight();              // LCD Backlight ON
   initial();                    // Device Start Configuration
@@ -92,7 +98,6 @@ void setup()
 
 void loop()
 {
-  //  lcd.noBacklight();
   //  lcd.setCursor(0, 0); //(C, R)
   //  lcd.print("SOLAR:");
   //  lcd.setCursor(6, 0);
@@ -110,7 +115,18 @@ void loop()
   //  lcd.print("67%"); //BYTB
   //  lcd.setCursor(10, 1);
   //  lcd.print("2H 21M");
-  alarm();
+  if(mode == 0){
+    
+  }
+  else if(mode == 1){
+    
+  }
+  if (LOAD > 45 | SOLAR > 50){
+    alarm();  
+  }
+   if (BAT == 12.4){
+    batalarm();
+   }
 }
 
 void initial()
@@ -152,5 +168,25 @@ void alarm() {
   lcd.setCursor(3, 1);
   lcd.print("EXCEEDED!!");
   Serial.println("Restart the Device...");
+  Serial.println(" ");
+}
+
+void batalarm() {
+  Serial.print("ALERT >> ");
+  Serial.println("BATTERY CHARGED!!");
+  lcd.noBacklight();
+  lcd.setCursor(3, 0);
+  lcd.print("BATTERY");
+  lcd.setCursor(3, 1);
+  lcd.print("CHARGED!!");
+  delay(500);
+  lcd.backlight();
+  delay(500);
+  lcd.noBacklight();
+  lcd.setCursor(3, 0);
+  lcd.print("BATTERY");
+  lcd.setCursor(3, 1);
+  lcd.print("CHARGED!!");
+  Serial.println("Unplug the Battery...");
   Serial.println(" ");
 }
