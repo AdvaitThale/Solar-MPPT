@@ -75,7 +75,7 @@ byte restore[15] = {0x00, 0x0D, 0x13, 0x17, 0x10, 0x10, 0x0E, 0x00};
 //ACS712 sensor(ACS712_05B, 2);
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
-void ISR(){
+void ISR() {
   digitalWrite();
 }
 
@@ -115,18 +115,23 @@ void loop()
   //  lcd.print("67%"); //BYTB
   //  lcd.setCursor(10, 1);
   //  lcd.print("2H 21M");
-  if(mode == 0){
-    
+  if (mode == 0) {
+    if (BTYB == buttonInterrupt) {
+      lcd.setCursor(5, 1);
+      lcd.write(byte(13));
+      
+      
+    }
   }
-  else if(mode == 1){
-    
+  else if (mode == 1) {
+
   }
-  if (LOAD > 45 | SOLAR > 50){
-    alarm();  
+  if (LOAD > 45 | SOLAR > 50) {
+    alarm();
   }
-   if (BAT == 12.4){
+  if (BAT == 12.4) {
     batalarm();
-   }
+  }
 }
 
 void initial()
