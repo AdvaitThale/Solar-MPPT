@@ -1,10 +1,21 @@
+/*
+  Author: Advait Thale
+
+
+
+  IR Receiver Pinout:
+  -------------
+  |OUT|VCC|GND|
+  -------------
+
+*/
 
 //#include <Arduino.h>
 //#include <IRremote.hpp>
 //#include <IRremote.h>
 #include "IRremote.hpp"
 
-#define receiver 15 // IR receiver, Connect the Y pin of the Keyes IR sensor with the GPIO 26 of ESP32 
+#define receiver 15 // IR receiver
 
 int GLED = 13; // LED Pin
 int BUZZ = 4; // BUZZER Pin
