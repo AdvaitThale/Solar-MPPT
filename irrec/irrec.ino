@@ -10,49 +10,48 @@
 
 */
 
-//#include <Arduino.h>
 //#include <IRremote.hpp>
-//#include <IRremote.h>
-#include "IRremote.hpp"
+#include <IRremote.h>
+//#include "IRremote.hpp"
 
-#define receiver 15 // IR receiver
+const byte IR_RECEIVE_PIN = 2; // IR receiver
 
-int GLED = 13; // LED Pin
-int BUZZ = 4; // BUZZER Pin
+int ILCD = 11;   
+int GLED = 12;     // LED Pin
+int BUZZ = 4;      // BUZZER Pin
 
-IRrecv irrecv(receiver);           // create instance of 'irrecv'
-decode_results results;            // create instance of 'decode_results'
+           // create instance of 'irrecv'
+           // create instance of 'decode_results'
 
 void setup() {
   Serial.begin(115200);
   Serial.println("IR Receiver -> ");
-  irrecv.enableIRIn(); // Start the receiver
+  IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
+  pinMode(ILCD, OUTPUT);
   pinMode(GLED, OUTPUT);
   pinMode(BUZZ, OUTPUT);
+  digitalWrite(ILCD, LOW);
   digitalWrite(GLED, LOW);
   digitalWrite(BUZZ, LOW);
 }
 
 
 void loop() {
-  if (irrecv.decode(&results)) // have we received an IR signal?
-  {
-    Serial.println(results.value, HEX);
-    //    translateIR();
-    if (results.value == 0x23DCFD01) {
-      digitalWrite(GLED, !digitalRead(GLED));
+  if (IrReceiver.decode()) {
+    Serial.println(IrReceiver.decodedIRData.command, HEX);
+   
+    if (IrReceiver.decodedIRData.command == 0xDC) {
+      digitalWrite(ILCD, !digitalRead(ILCD));
       delay(100);
     }
-
-    else if (results.value == 0x639CFD01) {
+    else if (IrReceiver.decodedIRData.command == 0x9C) {
       digitalWrite(BUZZ, !digitalRead(BUZZ));
       delay(100);
     }
-
-    else {
-      Serial.println("Invalid Command!!");
+     else if (IrReceiver.decodedIRData.command == 0x84) {
+      digitalWrite(GLED, !digitalRead(GLED));
       delay(100);
     }
-    irrecv.resume(); // receive the next value
+    IrReceiver.resume(); // receive the next value
   }
 }
