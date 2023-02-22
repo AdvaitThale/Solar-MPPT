@@ -1,6 +1,10 @@
 /*
   Author: Advait Thale
 
+  Sketched a code to obtain HEX code and control peripherals using 
+  IR Remote with Microcontroller's Digital Out. Update the Keymap 
+  as per equivalent remote.
+
 
   IR Remote Keypad Hex Map:
   
