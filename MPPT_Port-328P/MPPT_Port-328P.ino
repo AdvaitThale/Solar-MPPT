@@ -53,22 +53,20 @@
 
 */
 
-#include <math.h>   // Math Functions
+//#include <math.h>   // Math Functions
 //#include <ACS712.h> // ACS712 Functions
 #include <DHT.h>    // Ambient Temperature/Humidity Functions
 #include <Wire.h>   // For communication with I2C devices
 #include <LiquidCrystal_I2C.h>
 #include <IRremote.h>
 
-#define CUR 2
-#define DHTPIN 5
-#define BUZZ 4
-#define LED 2
+//#define CUR 2
+//#define DHTPIN 5
+//#define BUZZ 4
+//#define LED 2
 #define dt 2000
 
-int ILCD = 11;     // LCD Pin
-int GLED = 12;     // LED Pin
-int BUZZ = 4;      // BUZZER Pin
+
 
 long DUR;
 const byte IR_RECEIVE_PIN = 2; // IR receiver
@@ -76,59 +74,53 @@ float BYTA, BYTB, BYTI, BYTO, BYTT, BYTL, BYTP, BYTS, BYTH, THLD1, THLD2;
 byte charge[13] = {0x04, 0x0C, 0x1C, 0x1F, 0x1F, 0x07, 0x06, 0x04};
 byte error[14] = {0x00, 0x0E, 0x13, 0x17, 0x1D, 0x19, 0x0E, 0x00};
 byte restore[15] = {0x00, 0x0D, 0x13, 0x17, 0x10, 0x10, 0x0E, 0x00};
+int ILCD = 11;     // LCD Pin
+int GLED = 12;     // LED Pin
+int BUZZ = 4;      // BUZZER Pin
 
 //dht DHT;
 //ACS712 sensor(ACS712_05B, 2);
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
-void ISR() {
-  digitalWrite();
-}
-
 void setup()
 {
+  Serial.begin(115200);         // Program Port Serial Baud
   Serial.println("<--- MPPT Rev_8.07 --->");
   IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
   pinMode(ILCD, OUTPUT);
   pinMode(GLED, OUTPUT);
-  pinMode(CUR, INPUT);          // ADC Pin for ACS712
+  //  pinMode(CUR, INPUT);          // ADC Pin for ACS712
   pinMode(BUZZ, OUTPUT);        // Buzzer Pin for Beeps
-  pinMode(DHTPIN, INPUT);       // DHT11 Pin as Input
-  Serial.begin(115200);         // Program Port Serial Baud
-  Serial1.begin(9600);          // Compensated RS-232 Port Baud 9600
-  attachInterrupt(ISR, RISING, 0); // Attach Interrupt
-  lcd.init();                   // LCD Initialise
-  lcd.backlight();              // LCD Backlight ON
-  initial();                    // Device Start Configuration
-  Wire.begin();                 // Initiate wire lib. and I2C
-  Wire.beginTransmission(0x68); // Start transmission to 0x68(MPU)
-  Wire.write(0x6B);             // Power Management Register (PWR_MGMT_1)
-  Wire.write(0);                // Wake up IMU
-  Wire.endTransmission(true);   // End transmission to I2C slave
+//  pinMode(DHTPIN, INPUT);       // DHT11 Pin as Input
+  //  Serial1.begin(9600);          // Compensated RS-232 Port Baud 9600
+  //  attachInterrupt(ISR, RISING, 0); // Attach Interrupt
+//  lcd.init();                   // LCD Initialise
+//  lcd.backlight();              // LCD Backlight ON
+//  initial();                    // Device Start Configuration
+//  Wire.begin();                 // Initiate wire lib. and I2C
+//  Wire.beginTransmission(0x68); // Start transmission to 0x68(MPU)
+//  Wire.write(0x6B);             // Power Management Register (PWR_MGMT_1)
+//  Wire.write(0);                // Wake up IMU
+//  Wire.endTransmission(true);   // End transmission to I2C slave
   digitalWrite(ILCD, LOW);
   digitalWrite(GLED, LOW);
   digitalWrite(BUZZ, LOW);
 }
 
-void loop()
-{
-  
-
+void loop(){
   if (IrReceiver.decode()) {
     Serial.println(IrReceiver.decodedIRData.command, HEX);
-    
-     if (IrReceiver.decodedIRData.command == 0xDC) {
+
+    if (IrReceiver.decodedIRData.command == 0xDC) {
       digitalWrite(ILCD, !digitalRead(ILCD));
-      MAIN_DISPLAY();
       delay(100);
     }
-   else if (IrReceiver.decodedIRData.command == 0x84) {
+    else if (IrReceiver.decodedIRData.command == 0x84) {
       digitalWrite(GLED, !digitalRead(GLED));
       delay(100);
     }
     else if (IrReceiver.decodedIRData.command == 0x9C) {
-      alarm();
-      //digitalWrite(BUZZ, !digitalRead(BUZZ));
+      digitalWrite(BUZZ, !digitalRead(BUZZ));
       delay(100);
     }
     IrReceiver.resume(); // receive the next value
@@ -136,24 +128,24 @@ void loop()
 }
 
 
-void MAIN_DISPLAY(){
-    lcd.setCursor(0, 0); //(C, R)
-    lcd.print("SOLAR:");
-    lcd.setCursor(6, 0);
-    lcd.print("89W"); // BYTS
-    lcd.setCursor(11, 0);
-    lcd.print("LOAD:");
-    lcd.setCursor(16, 0);
-    lcd.print("22W"); // BYTL
-    lcd.setCursor(0, 1);
-    lcd.print("BAT:");
-    lcd.createChar(13, charge);
-    lcd.setCursor(5, 1);
-    lcd.write(byte(13));
-    lcd.setCursor(6, 1);
-    lcd.print("67%"); //BYTB
-    lcd.setCursor(10, 1);
-    lcd.print("2H 21M");
+void MAIN_DISPLAY() {
+  lcd.setCursor(0, 0); //(C, R)
+  lcd.print("SOLAR:");
+  lcd.setCursor(6, 0);
+  lcd.print("89W"); // BYTS
+  lcd.setCursor(11, 0);
+  lcd.print("LOAD:");
+  lcd.setCursor(16, 0);
+  lcd.print("22W"); // BYTL
+  lcd.setCursor(0, 1);
+  lcd.print("BAT:");
+  lcd.createChar(13, charge);
+  lcd.setCursor(5, 1);
+  lcd.write(byte(13));
+  lcd.setCursor(6, 1);
+  lcd.print("67%"); //BYTB
+  lcd.setCursor(10, 1);
+  lcd.print("2H 21M");
 }
 
 void initial()
