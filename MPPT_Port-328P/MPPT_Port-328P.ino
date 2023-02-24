@@ -58,6 +58,7 @@
 #include <DHT.h>    // Ambient Temperature/Humidity Functions
 #include <Wire.h>   // For communication with I2C devices
 #include <LiquidCrystal_I2C.h>
+#include <IRremote.h>
 
 #define CUR 2
 #define DHTPIN 5
@@ -65,7 +66,12 @@
 #define LED 2
 #define dt 2000
 
+int ILCD = 11;     // LCD Pin
+int GLED = 12;     // LED Pin
+int BUZZ = 4;      // BUZZER Pin
+
 long DUR;
+const byte IR_RECEIVE_PIN = 2; // IR receiver
 float BYTA, BYTB, BYTI, BYTO, BYTT, BYTL, BYTP, BYTS, BYTH, THLD1, THLD2;
 byte charge[13] = {0x04, 0x0C, 0x1C, 0x1F, 0x1F, 0x07, 0x06, 0x04};
 byte error[14] = {0x00, 0x0E, 0x13, 0x17, 0x1D, 0x19, 0x0E, 0x00};
@@ -81,7 +87,6 @@ void ISR() {
 
 void setup()
 {
-  Serial.begin(115200);
   Serial.println("<--- MPPT Rev_8.07 --->");
   IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
   pinMode(ILCD, OUTPUT);
@@ -89,7 +94,8 @@ void setup()
   pinMode(CUR, INPUT);          // ADC Pin for ACS712
   pinMode(BUZZ, OUTPUT);        // Buzzer Pin for Beeps
   pinMode(DHTPIN, INPUT);       // DHT11 Pin as Input
-  Serial.begin(9600);           // Compensated Baud to 9600 for RS-232
+  Serial.begin(115200);         // Program Port Serial Baud
+  Serial1.begin(9600);          // Compensated RS-232 Port Baud 9600
   attachInterrupt(ISR, RISING, 0); // Attach Interrupt
   lcd.init();                   // LCD Initialise
   lcd.backlight();              // LCD Backlight ON
@@ -106,40 +112,48 @@ void setup()
 
 void loop()
 {
-  //  lcd.setCursor(0, 0); //(C, R)
-  //  lcd.print("SOLAR:");
-  //  lcd.setCursor(6, 0);
-  //  lcd.print("89W"); // BYTS
-  //  lcd.setCursor(11, 0);
-  //  lcd.print("LOAD:");
-  //  lcd.setCursor(16, 0);
-  //  lcd.print("22W"); // BYTL
-  //  lcd.setCursor(0, 1);
-  //  lcd.print("BAT:");
-  //  lcd.createChar(13, charge);
-  //  lcd.setCursor(5, 1);
-  //  lcd.write(byte(13));
-  //  lcd.setCursor(6, 1);
-  //  lcd.print("67%"); //BYTB
-  //  lcd.setCursor(10, 1);
-  //  lcd.print("2H 21M");
-  if (mode == 0) {
-    if (BTYB == buttonInterrupt) {
-      lcd.setCursor(5, 1);
-      lcd.write(byte(13));
-      
-      
-    }
-  }
-  else if (mode == 1) {
+  
 
+  if (IrReceiver.decode()) {
+    Serial.println(IrReceiver.decodedIRData.command, HEX);
+    
+     if (IrReceiver.decodedIRData.command == 0xDC) {
+      digitalWrite(ILCD, !digitalRead(ILCD));
+      MAIN_DISPLAY();
+      delay(100);
+    }
+   else if (IrReceiver.decodedIRData.command == 0x84) {
+      digitalWrite(GLED, !digitalRead(GLED));
+      delay(100);
+    }
+    else if (IrReceiver.decodedIRData.command == 0x9C) {
+      alarm();
+      //digitalWrite(BUZZ, !digitalRead(BUZZ));
+      delay(100);
+    }
+    IrReceiver.resume(); // receive the next value
   }
-  if (LOAD > 45 | SOLAR > 50) {
-    alarm();
-  }
-  if (BAT == 12.4) {
-    batalarm();
-  }
+}
+
+
+void MAIN_DISPLAY(){
+    lcd.setCursor(0, 0); //(C, R)
+    lcd.print("SOLAR:");
+    lcd.setCursor(6, 0);
+    lcd.print("89W"); // BYTS
+    lcd.setCursor(11, 0);
+    lcd.print("LOAD:");
+    lcd.setCursor(16, 0);
+    lcd.print("22W"); // BYTL
+    lcd.setCursor(0, 1);
+    lcd.print("BAT:");
+    lcd.createChar(13, charge);
+    lcd.setCursor(5, 1);
+    lcd.write(byte(13));
+    lcd.setCursor(6, 1);
+    lcd.print("67%"); //BYTB
+    lcd.setCursor(10, 1);
+    lcd.print("2H 21M");
 }
 
 void initial()
@@ -206,39 +220,5 @@ void batalarm() {
 
 
 
-#include <IRremote.h>
-//#include "IRremote.hpp"
-
-const byte IR_RECEIVE_PIN = 2; // IR receiver
-
-int ILCD = 11;     // LCD Pin
-int GLED = 12;     // LED Pin
-int BUZZ = 4;      // BUZZER Pin
-
 // create instance of 'irrecv'
 // create instance of 'decode_results'
-
-void setup() {
-
-}
-
-
-void loop() {
-  if (IrReceiver.decode()) {
-    Serial.println(IrReceiver.decodedIRData.command, HEX);
-
-    if (IrReceiver.decodedIRData.command == 0xDC) {
-      digitalWrite(ILCD, !digitalRead(ILCD));
-      delay(100);
-    }
-    else if (IrReceiver.decodedIRData.command == 0x9C) {
-      digitalWrite(BUZZ, !digitalRead(BUZZ));
-      delay(100);
-    }
-    else if (IrReceiver.decodedIRData.command == 0x84) {
-      digitalWrite(GLED, !digitalRead(GLED));
-      delay(100);
-    }
-    IrReceiver.resume(); // receive the next value
-  }
-}
