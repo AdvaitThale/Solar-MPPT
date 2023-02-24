@@ -48,7 +48,7 @@
 
 const byte IR_RECEIVE_PIN = 2; // IR receiver
 
-int ILCD = 11;
+int ILCD = 11;     // LCD Pin
 int GLED = 12;     // LED Pin
 int BUZZ = 4;      // BUZZER Pin
 

@@ -81,6 +81,11 @@ void ISR() {
 
 void setup()
 {
+  Serial.begin(115200);
+  Serial.println("<--- MPPT Rev_8.07 --->");
+  IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
+  pinMode(ILCD, OUTPUT);
+  pinMode(GLED, OUTPUT);
   pinMode(CUR, INPUT);          // ADC Pin for ACS712
   pinMode(BUZZ, OUTPUT);        // Buzzer Pin for Beeps
   pinMode(DHTPIN, INPUT);       // DHT11 Pin as Input
@@ -94,6 +99,9 @@ void setup()
   Wire.write(0x6B);             // Power Management Register (PWR_MGMT_1)
   Wire.write(0);                // Wake up IMU
   Wire.endTransmission(true);   // End transmission to I2C slave
+  digitalWrite(ILCD, LOW);
+  digitalWrite(GLED, LOW);
+  digitalWrite(BUZZ, LOW);
 }
 
 void loop()
@@ -194,4 +202,43 @@ void batalarm() {
   lcd.print("CHARGED!!");
   Serial.println("Unplug the Battery...");
   Serial.println(" ");
+}
+
+
+
+#include <IRremote.h>
+//#include "IRremote.hpp"
+
+const byte IR_RECEIVE_PIN = 2; // IR receiver
+
+int ILCD = 11;     // LCD Pin
+int GLED = 12;     // LED Pin
+int BUZZ = 4;      // BUZZER Pin
+
+// create instance of 'irrecv'
+// create instance of 'decode_results'
+
+void setup() {
+
+}
+
+
+void loop() {
+  if (IrReceiver.decode()) {
+    Serial.println(IrReceiver.decodedIRData.command, HEX);
+
+    if (IrReceiver.decodedIRData.command == 0xDC) {
+      digitalWrite(ILCD, !digitalRead(ILCD));
+      delay(100);
+    }
+    else if (IrReceiver.decodedIRData.command == 0x9C) {
+      digitalWrite(BUZZ, !digitalRead(BUZZ));
+      delay(100);
+    }
+    else if (IrReceiver.decodedIRData.command == 0x84) {
+      digitalWrite(GLED, !digitalRead(GLED));
+      delay(100);
+    }
+    IrReceiver.resume(); // receive the next value
+  }
 }
