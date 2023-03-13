@@ -1,14 +1,14 @@
 /*
   Author: Advait Thale
 
-  Sketched a code to obtain HEX code and control peripherals using 
-  IR Remote with Microcontroller's Digital Out. Update the Keymap 
+  Sketched a code to obtain HEX code and control peripherals using
+  IR Remote with Microcontroller's Digital Out. Update the Keymap
   as per equivalent remote.
 
 
   IR Remote Keypad Hex Map:
-  
-        +------------------+              
+
+        +------------------+
         |              DC  |
         |                  |
         |  92    93    CC  |
@@ -42,18 +42,14 @@
 
 */
 
-//#include <IRremote.hpp>
+
 #include <IRremote.h>
-//#include "IRremote.hpp"
 
 const byte IR_RECEIVE_PIN = 2; // IR receiver
 
 int ILCD = 11;     // LCD Pin
 int GLED = 12;     // LED Pin
 int BUZZ = 4;      // BUZZER Pin
-
-// create instance of 'irrecv'
-// create instance of 'decode_results'
 
 void setup() {
   Serial.begin(115200);
@@ -67,23 +63,52 @@ void setup() {
   digitalWrite(BUZZ, LOW);
 }
 
-
 void loop() {
   if (IrReceiver.decode()) {
-    Serial.println(IrReceiver.decodedIRData.command, HEX);
+    switch (IrReceiver.decodedIRData.command) {
+      case 0xDC:
+        Serial.println("btn1");
+        break;
 
-    if (IrReceiver.decodedIRData.command == 0xDC) {
-      digitalWrite(ILCD, !digitalRead(ILCD));
-      delay(100);
+      case 0x92:
+        Serial.println("btn2");
+        break;
+
+      case 0x93:
+        Serial.println("btn3");
+        break;
+
+      default:
+        Serial.println(IrReceiver.decodedIRData.command, HEX);
     }
-    else if (IrReceiver.decodedIRData.command == 0x9C) {
-      digitalWrite(BUZZ, !digitalRead(BUZZ));
-      delay(100);
-    }
-    else if (IrReceiver.decodedIRData.command == 0x84) {
-      digitalWrite(GLED, !digitalRead(GLED));
-      delay(100);
-    }
-    IrReceiver.resume(); // Receive the next value
+    IrReceiver.resume(); // Receive the Next Value
   }
 }
+
+
+
+/*
+    if (irrecv.decode(&results)) {
+    switch (results.value) {
+      case 16582903:
+        lcd.print("btn1"); // Button 1
+        delay(600);
+        lcd.begin(16, 2);
+        break;
+      case 16615543:
+        lcd.print("btn2"); // Button 2
+        delay(600);
+        lcd.begin(16, 2);
+        break;
+      case 16599223:
+        lcd.print("btn3"); // Button 3
+        delay(600);
+        lcd.begin(16, 2);
+        break;
+      default:
+        Serial.println(results.value);
+    }
+    irrecv.resume(); // Receive the next value
+  }
+  }
+*/
