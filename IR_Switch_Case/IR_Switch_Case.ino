@@ -66,20 +66,24 @@ void setup() {
 void loop() {
   if (IrReceiver.decode()) {
     switch (IrReceiver.decodedIRData.command) {
-      case 0xDC:
-        Serial.println("btn1");
+       Serial.println(IrReceiver.decodedIRData.command, HEX);
+      case 0x84:
+        digitalWrite(GLED, !digitalRead(GLED));
+        //Serial.println("btn1");
         break;
 
-      case 0x92:
-        Serial.println("btn2");
+      case 0xD9:
+      digitalWrite(ILCD, !digitalRead(ILCD));
+        //Serial.println("btn2");
         break;
 
-      case 0x93:
-        Serial.println("btn3");
+      case 0x89:
+      digitalWrite(BUZZ, !digitalRead(BUZZ));
+        //Serial.println("btn3");
         break;
 
       default:
-        Serial.println(IrReceiver.decodedIRData.command, HEX);
+       Serial.println("Default");
     }
     IrReceiver.resume(); // Receive the Next Value
   }
