@@ -60,7 +60,6 @@
 
 #include <math.h>               // Math Functions
 //#include <ACS712.h>             // ACS712 Functions                        
-#include <DHT.h>                // Ambient Temperature/Humidity Functions     
 #include <Wire.h>               // For communication with I2C devices
 #include <LiquidCrystal_I2C.h>
 
@@ -68,7 +67,7 @@
 #define TRIG 16
 #define ECHO 17
 #define DHTPIN 4
-#define BUZZ 5
+#define BUZZ 15
 #define dt  2000
 
 int play = 0;
@@ -114,8 +113,8 @@ void noTone(){
 
 void initial()
 {
-  lcd.setCursor(3, 0);
-  lcd.print("MPPT");
+  lcd.setCursor(0, 0);
+  lcd.print("MPPT Rev 2.3");
   lcd.setCursor(0, 1);
   lcd.print("----------------");
   Serial.println("Initializing MPPT...");
