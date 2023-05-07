@@ -25,19 +25,19 @@
 
                                3V3 |*|                       |*| 5V
                                GND |*|                       |*| GND
-                               IR  |*| GPIO15         GPIO13 |*| C.START/STOP
-                               CUR |*| GPIO02         GPIO12 |*| ALARM
-                    AMB TEMP / HUM |*| GPIO04         GPIO14 |*| 
-                                   |*| GPIO16         GPIO27 |*| 
-                                   |*| GPIO17         GPIO26 |*|  -
-                              BUZZ |*| GPIO05         GPIO25 |*| RELAY 
-                                -  |*| GPIO18         GPIO33 |*| RELAY 
-                                -  |*| GPIO19         GPIO32 |*| RELAY 
-                               SDA |*| GPIO21         GPIO35 |*| RELAY 
-                               RX  |*| GPIO03         GPIO34 |*| PT-100(I)
-                               TX  |*| GPIO01         GPIO39 |*| PT-100(O)
-                               SCL |*| GPIO22         GPIO36 |*| PRES
-                                -  |*| GPIO23           EN   |*|  - 
+                              BUZZ |*| GPIO15         GPIO13 |*| ACS712
+                              MD#1 |*| GPIO02         GPIO12 |*| PIDFAN
+                              MD#2 |*| GPIO04         GPIO14 |*| LM35
+                              RX   |*| GPIO16         GPIO27 |*|  -
+                              TX   |*| GPIO17         GPIO26 |*|  -
+                               -   |*| GPIO05         GPIO25 |*|  -
+                              C.C. |*| GPIO18         GPIO33 |*|  -
+                              ESW  |*| GPIO19         GPIO32 |*|  -
+                              SDA  |*| GPIO21         GPIO35 |*|  -
+                             EDATA |*| GPIO03         GPIO34 |*|  -
+                             ECLK  |*| GPIO01         GPIO39 |*| SINE-
+                              SCL  |*| GPIO22         GPIO36 |*| SINE+
+                             IRREC |*| GPIO23           EN   |*|  - 
                                 
   ***************************************************************************************************
   
@@ -49,7 +49,7 @@
   BYTN      Count                        N(Discrete Number)
   BYTO      Outdoor Temperature          C(Degree Celcius)
   BYTI      Current (AC/DC) upto 5A      A(Ampere)
-  BYTI      Indoor Temperature           C(Degree Celcius)
+  BYTB      Battery Temperature           C(Degree Celcius)
   BYTL      Coolant Level                CM(Centimetre)
   BYTP      Ambient Pressure             Bar (= 100,000kPA)
   BYTH      Humidity                     Percentage
@@ -68,9 +68,11 @@
 #define ECHO 17
 #define DHTPIN 4
 #define BUZZ 15
+#define LM 
 #define dt  2000
 
 int play = 0;
+float PID_TEMP;
 float BYTA, BYTAT, BYTT, BYTL, BYTP, BYTF, BYTR, BYTI, BYTN, BYTH, BYTX, BYTY, BYTZ, THLD1, THLD2;
 long DUR;
 
@@ -97,6 +99,12 @@ void setup() {
 
 
 void loop() {
+  lcd.setCursor(0, 0);
+  lcd.print("VOL:");
+  lcd.setCursor(9, 0);
+  lcd.print("TEMP:");
+  lcd.setCursor(14, 0);
+  lcd.print(PID_TEMP);
   
 }
 
