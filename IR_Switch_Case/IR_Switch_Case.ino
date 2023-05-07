@@ -36,10 +36,16 @@
 
 
   IR Receiver Pinout:
+  Sheildless:
   -------------
   |OUT|VCC|GND|
   -------------
 
+  VS1838B:
+  -------------
+  |OUT|GND|VCC|
+  -------------
+  
 */
 
 
