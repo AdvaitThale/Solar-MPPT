@@ -63,12 +63,13 @@
 #include <Wire.h>               // For communication with I2C devices
 #include <LiquidCrystal_I2C.h>
 
-#define CUR 2
+#define CUR 13
+#define MDA 2
+#define MDB 4
+#define BUZZ 15
+#define LM 14
 #define TRIG 16
 #define ECHO 17
-#define DHTPIN 4
-#define BUZZ 15
-#define LM 
 #define dt  2000
 
 int play = 0;
@@ -82,11 +83,11 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void setup() {
   pinMode(CUR, INPUT);                    // ADC Pin for ACS712
-  pinMode(TRIG, OUTPUT);                  // TRIGGER Pin of HC-SR05 to Write
-  pinMode(ECHO, INPUT);                   // ECHO Pin of HC-SR05 to Read
+  pinMode(MDA, OUTPUT);                   // MOSFET Driver Pin A
+  pinMode(MDB, INPUT);                    // MOSFET Driver Pin B
   pinMode(BUZZ, OUTPUT);                  // Buzzer Pin for Beeps
-  pinMode(DHTPIN, INPUT);                 //DHT11 Pin as Input
-  Serial.begin(115200);                     // Compensated Baud to 9600 for RS-232
+  pinMode(LM, INPUT);                     // ADC Pin for LM35 Temp.
+  Serial.begin(115200);                   // Compensated Baud to 9600 for RS-232
   lcd.init();                             // LCD Initialise
   lcd.backlight();                        // LCD Backlight ON
   initial();                              // Device Start Configuration
@@ -99,6 +100,9 @@ void setup() {
 
 
 void loop() {
+  PID_TEMP = analogRead(LM);
+  Serial.print("BATTERY TEMP.: ");
+  Serial.println(PID_TEMP);
   lcd.setCursor(0, 0);
   lcd.print("VOL:");
   lcd.setCursor(9, 0);
