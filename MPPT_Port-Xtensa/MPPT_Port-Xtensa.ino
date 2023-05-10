@@ -71,7 +71,7 @@
 #define TRIG 16
 #define ECHO 17
 #define dt  2000
-
+/*************define macros ***********************/
 int play = 0;
 float PID_TEMP;
 float BYTA, BYTAT, BYTT, BYTL, BYTP, BYTF, BYTR, BYTI, BYTN, BYTH, BYTX, BYTY, BYTZ, THLD1, THLD2;
