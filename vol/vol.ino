@@ -1,15 +1,29 @@
+#include <Arduino.h>
+#include <WiFiMulti.h>
 
-#define VOL 34
 
-int adc = 0;
+#define WIFI_SSID "MPPT Rev 2.3"
+#define WIFI_PASSWORD "Mppt_N3t"
 
-void setup(){
-  pinMode(VOL, INPUT);
+WiFiMulti wifiMulti;
+
+void setup()
+{
   Serial.begin(115200);
+//  pinMode(LED_BUILTIN, OUTPUT);
+
+  wifiMulti.addAP(WIFI_SSID, WIFI_PASSWORD);
+  Serial.print("Connecting");
+
+  while (wifiMulti.run() != WL_CONNECTED)
+  {
+    delay(100);
+    Serial.print(".");
+  }
+  Serial.println("Connected!!");
 }
 
- void loop(){
-  adc = analogRead(VOL);
-  float voltage = 3.3 * (adc/4096.0); 
-  Serial.println(voltage);
- }
+void loop()
+{
+//  digitalWrite(LED_BUILTIN, WiFi.status() == WL_CONNECTED);
+}
