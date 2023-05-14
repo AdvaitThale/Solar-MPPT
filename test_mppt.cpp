@@ -1,7 +1,6 @@
 #include <Arduino.h>
 
 #define LED 2
-// #define LED 2
 
 void setup()
 {
