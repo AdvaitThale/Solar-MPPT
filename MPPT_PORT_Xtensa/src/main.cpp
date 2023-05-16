@@ -137,8 +137,8 @@ void loop()
   lcd.print("VOL:");
   lcd.setCursor(8, 0);
   lcd.print("V");
-  lcd.setCursor(9, 0);
-  lcd.write(9);
+  lcd.setCursor(10, 0);
+  lcd.write(9);   
   lcd.setCursor(11, 0);
   lcd.print(PID_TEMP);
   lcd.setCursor(15, 0);
