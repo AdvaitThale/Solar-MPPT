@@ -33,8 +33,8 @@
                                -   |*| GPIO05         GPIO25 |*|  -
                               C.C. |*| GPIO18         GPIO33 |*|  -
                               ESW  |*| GPIO19         GPIO32 |*|  -
-                              SDA  |*| GPIO21         GPIO35 |*|  -
-                             EDATA |*| GPIO03         GPIO34 |*|  -
+                              SDA  |*| GPIO21         GPIO35 |*|  %
+                             EDATA |*| GPIO03         GPIO34 |*|  %
                              ECLK  |*| GPIO01         GPIO39 |*| SINE-
                               SCL  |*| GPIO22         GPIO36 |*| SINE+
                              IRREC |*| GPIO23           EN   |*|  -
@@ -63,49 +63,29 @@
 #define PBJT 18    // Battery Charge Control BJT
 #define dt 2000
 
-int RAW_TEMP, play = 0;
+int RAW_TEMP, PLAY = 0;
 float PID_TEMP, BAT_CURRENT;
 
-byte TEMP[] = {0x04, 0x0A, 0x0A, 0x0A, 0x0E, 0x1F, 0x1F, 0x0E};
-byte CELSIUS[] = {0x18, 0x18, 0x07, 0x08, 0x08, 0x08, 0x08, 0x07};
+byte TEMP[] = {0x04, 0x0A, 0x0A, 0x0A, 0x0E, 0x1F, 0x1F, 0x0E};    // Thermometer Character
+byte CELSIUS[] = {0x18, 0x18, 0x07, 0x08, 0x08, 0x08, 0x08, 0x07}; // Modified °C Character
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 // ACS712 sensor(ACS712_05B, 2);
+
 void greetings();
-void tone(byte pin, int freq)
+void scrollThrough();
+
+void tone(byte PIN, int FREQ)
 {
   ledcSetup(0, 2000, 8);
-  ledcAttachPin(pin, 0);
-  ledcWriteTone(0, freq);
-  play = pin;
+  ledcAttachPin(PIN, 0);
+  ledcWriteTone(0, FREQ);
+  PLAY = PIN;
 }
 
 void noTone()
 {
-  tone(play, 0);
-}
-
-void greetings()
-{
-  lcd.setCursor(0, 0);
-  lcd.print("MPPT Rev 2.3");
-  lcd.setCursor(0, 1);
-  lcd.print("----------------");
-  Serial.println("Initializing MPPT...");
-  digitalWrite(MOSFET_1, HIGH);
-  digitalWrite(BUZZ, !digitalRead(BUZZ));
-  // digitalWrite(BUZZ, HIGH);
-  delay(85);
-  // digitalWrite(BUZZ, LOW);
-  tone(BUZZ, 4093);
-  delay(200);
-  noTone();
-  digitalWrite(BUZZ, !digitalRead(BUZZ));
-  // digitalWrite(BUZZ, HIGH);
-  delay(100);
-  // digitalWrite(BUZZ, LOW);
-  delay(dt);
-  lcd.clear();
+  tone(PLAY, 0);
 }
 
 void setup()
@@ -138,7 +118,7 @@ void loop()
   lcd.setCursor(8, 0);
   lcd.print("V");
   lcd.setCursor(10, 0);
-  lcd.write(9);   
+  lcd.write(9);
   lcd.setCursor(11, 0);
   lcd.print(PID_TEMP);
   lcd.setCursor(15, 0);
@@ -149,4 +129,23 @@ void loop()
   lcd.print(BAT_CURRENT);
   lcd.setCursor(8, 1);
   lcd.print("A");
+}
+
+void greetings()
+{
+  lcd.setCursor(0, 0);
+  lcd.print("MPPT Rev 2.3");
+  lcd.setCursor(0, 1);
+  lcd.print("----------------");
+  Serial.println("Initializing MPPT...");
+  digitalWrite(MOSFET_1, HIGH);
+  digitalWrite(BUZZ, !digitalRead(BUZZ));
+  delay(85);
+  tone(BUZZ, 4093);
+  delay(200);
+  noTone();
+  digitalWrite(BUZZ, !digitalRead(BUZZ));
+  delay(100);
+  delay(dt);
+  lcd.clear();
 }
