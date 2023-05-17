@@ -45,7 +45,8 @@
 
 #include <Arduino.h>
 #include <LiquidCrystal_I2C.h>
-#include <WiFi.h>
+#include <IRremote.h>
+// #include <WiFi.h>
 
 // Local SSID
 // #define WIFI_SSID "MPPT Rev 2.3"
@@ -97,6 +98,7 @@ void setup()
   pinMode(MOSFET_2, INPUT);  // MOSFET Driver Pin B
   pinMode(BUZZ, OUTPUT);     // Buzzer Pin for Beeps
   pinMode(LM, INPUT);        // ADC Pin for LM35 Temp.
+  pinMode(IREC, INPUT);      // IR Receiver VS1838B
   lcd.init();                // LCD Initialise
   lcd.backlight();           // LCD Backlight ON
   // WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -130,7 +132,6 @@ void loop()
   lcd.print(BAT_CURRENT);
   lcd.setCursor(8, 1);
   lcd.print("A");
-  lcd.autoscroll();
 }
 
 void greetings()
@@ -150,4 +151,33 @@ void greetings()
   delay(100);
   delay(dt);
   lcd.clear();
+}
+
+void IR_MOSFET_Control()
+{
+  if (IrReceiver.decode())
+  {
+    switch (IrReceiver.decodedIRData.command)
+    {
+    case 0x84:
+      digitalWrite(MOSFET_1, !digitalRead(MOSFET_1));
+      Serial.println("<OUTPUT 1 Engaged>");
+      break;
+
+    case 0xD9:
+      digitalWrite(MOSFET_2, !digitalRead(MOSFET_2));
+      Serial.println("<OUTPUT 2 Engaged>");
+      break;
+
+    case 0x89:
+      digitalWrite(BUZZ, !digitalRead(BUZZ));
+      // Serial.println("btn3");
+      break;
+
+    default:
+      Serial.println(IrReceiver.decodedIRData.command, HEX);
+      //        Serial.println("Default");
+    }
+    IrReceiver.resume(); // Receive the Next Value
+  }
 }
