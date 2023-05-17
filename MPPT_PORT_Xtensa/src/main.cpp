@@ -45,6 +45,7 @@
 
 #include <Arduino.h>
 #include <LiquidCrystal_I2C.h>
+#include <WiFi.h>
 
 // Local SSID
 // #define WIFI_SSID "MPPT Rev 2.3"
@@ -129,6 +130,7 @@ void loop()
   lcd.print(BAT_CURRENT);
   lcd.setCursor(8, 1);
   lcd.print("A");
+  lcd.autoscroll();
 }
 
 void greetings()
