@@ -171,7 +171,7 @@ void IR_MOSFET_Control()
 
     case 0x89:
       digitalWrite(BUZZ, !digitalRead(BUZZ));
-      // Serial.println("btn3");
+      Serial.println("ALARM ON");
       break;
 
     default:
@@ -180,4 +180,3 @@ void IR_MOSFET_Control()
     }
     IrReceiver.resume(); // Receive the Next Value
   }
-}
