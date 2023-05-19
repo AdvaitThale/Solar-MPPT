@@ -46,6 +46,7 @@
 #include <Arduino.h>
 #include <LiquidCrystal_I2C.h>
 #include <IRremote.h>
+#include <ACS712.h>
 // #include <WiFi.h>
 
 // Local SSID
@@ -63,19 +64,25 @@
 #define LM 14      // LM-35
 #define IREC 23    // IR Receiver
 #define PBJT 18    // Battery Charge Control BJT
+#define BVOL 34    // Battery Voltage ADC
+#define SVOL 35    // Input Voltage ADC
 #define dt 2000
 
-int RAW_TEMP, PLAY = 0;
-float PID_TEMP, BAT_CURRENT;
+int RAW_TEMP, BAT_VOL, SOL_VOL, PLAY = 0;
+float BAT_VOL_R_FACT, SOL_VOL_R_FACT = 0.09;
+float PID_TEMP, BAT_CURRENT, BAT_VOLTAGE, SOL_VOLTAGE;
 
 byte TEMP[] = {0x04, 0x0A, 0x0A, 0x0A, 0x0E, 0x1F, 0x1F, 0x0E};    // Thermometer Character
 byte CELSIUS[] = {0x18, 0x18, 0x07, 0x08, 0x08, 0x08, 0x08, 0x07}; // Modified °C Character
+byte BATTERY[] = {0x0E, 0x11, 0x11, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F}; // Battery Character
+byte PANEL[] = {0x1F, 0x15, 0x1F, 0x15, 0x1F, 0x15, 0x1F, 0x00};   // PV Panel Character
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
-// ACS712 sensor(ACS712_05B, 2);
+ACS712 sensor(ACS712_05B, 13);
 
 void greetings();
-void scrollThrough();
+void SOLAR_INFO();
+void BATTERY_INFO();
 
 void tone(byte PIN, int FREQ)
 {
@@ -94,6 +101,8 @@ void setup()
 {
   Serial.begin(115200);
   pinMode(CUR, INPUT);       // ADC Pin for ACS712
+  pinMode(BVOL, INPUT);      // ADC Pin for Battery Voltage
+  pinMode(SVOL, INPUT);      // ADC Pin for Input Voltage
   pinMode(MOSFET_1, OUTPUT); // MOSFET Driver Pin A
   pinMode(MOSFET_2, INPUT);  // MOSFET Driver Pin B
   pinMode(BUZZ, OUTPUT);     // Buzzer Pin for Beeps
@@ -108,30 +117,10 @@ void setup()
 
 void loop()
 {
-  lcd.createChar(9, TEMP);
-  lcd.createChar(10, CELSIUS);
-  lcd.home();
-  RAW_TEMP = analogRead(LM);           // Read LM ADC
-  PID_TEMP = ((RAW_TEMP * 1.22) / 10); // Convert ADC value to equivalent voltage and divide since LM35 gives output of 10mv/°C*/
-  Serial.print("BATTERY TEMP.: ");
-  Serial.print(PID_TEMP);
-  Serial.println(" °C");
-  lcd.setCursor(0, 0);
-  lcd.print("VOL:");
-  lcd.setCursor(8, 0);
-  lcd.print("V");
-  lcd.setCursor(10, 0);
-  lcd.write(9);
-  lcd.setCursor(11, 0);
-  lcd.print(PID_TEMP);
-  lcd.setCursor(15, 0);
-  lcd.write(10);
-  lcd.setCursor(0, 1);
-  lcd.print("CUR: ");
-  lcd.setCursor(4, 1);
-  lcd.print(BAT_CURRENT);
-  lcd.setCursor(8, 1);
-  lcd.print("A");
+  SOLAR_INFO();
+  delay(dt);
+  BATTERY_INFO();
+  delay(dt);
 }
 
 void greetings()
@@ -153,30 +142,113 @@ void greetings()
   lcd.clear();
 }
 
-void IR_MOSFET_Control()
+void SOLAR_INFO()
 {
-  if (IrReceiver.decode())
-  {
-    switch (IrReceiver.decodedIRData.command)
-    {
-    case 0x84:
-      digitalWrite(MOSFET_1, !digitalRead(MOSFET_1));
-      Serial.println("<OUTPUT 1 Engaged>");
-      break;
+  lcd.createChar(9, TEMP);
+  lcd.createChar(10, CELSIUS);
+  lcd.createChar(11, PANEL);
+  lcd.home();
+  SOL_VOL = analogRead(SVOL);
+  SOL_VOLTAGE = SOL_VOL * (4.0 / 4096) * 10;
+  BAT_CURRENT = (sensor.getCurrentAC() / 1000);
+  RAW_TEMP = analogRead(LM);           // Read LM ADC
+  PID_TEMP = ((RAW_TEMP * 1.22) / 10); // Convert ADC value to equivalent voltage and divide since LM35 gives output of 10mv/°C*/
+  lcd.setCursor(0, 0);
+  lcd.print("VOL:");
+  lcd.setCursor(4, 0);
+  lcd.print(SOL_VOLTAGE);
+  lcd.setCursor(8, 0);
+  lcd.print("V");
+  lcd.setCursor(10, 0);
+  lcd.write(9);
+  lcd.setCursor(11, 0);
+  lcd.print(PID_TEMP);
+  lcd.setCursor(15, 0);
+  lcd.write(10);
+  lcd.setCursor(0, 1);
+  lcd.print("CUR: ");
+  lcd.setCursor(4, 1);
+  lcd.print(BAT_CURRENT);
+  lcd.setCursor(8, 1);
+  lcd.print("A");
+  lcd.setCursor(11, 1);
+  lcd.write(11);
+  Serial.print(" | SOLAR | ");
+  Serial.print("VOLTAGE: ");
+  Serial.print(SOL_VOLTAGE);
+  Serial.print(" CURRENT: ");
+  Serial.print(BAT_CURRENT);
+  Serial.print(" BATTERY TEMP.: ");
+  Serial.print(PID_TEMP);
+  Serial.print(" °C ");
+  Serial.print(SOL_VOL);
+}
+void BATTERY_INFO()
+{
+  lcd.createChar(9, TEMP);
+  lcd.createChar(10, CELSIUS);
+  lcd.createChar(12, BATTERY);
+  lcd.home();
+  BAT_VOL = analogRead(BVOL);
+  BAT_VOLTAGE = BAT_VOL * (4.0 / 4096);
+  BAT_CURRENT = (sensor.getCurrentAC() / 1000);
+  RAW_TEMP = analogRead(LM);           // Read LM ADC
+  PID_TEMP = ((RAW_TEMP * 1.22) / 10); // Convert ADC value to equivalent voltage and divide since LM35 gives output of 10mv/°C*/
+  lcd.setCursor(0, 0);
+  lcd.print("VOL:");
+  lcd.setCursor(4, 0);
+  lcd.print(BAT_VOLTAGE);
+  lcd.setCursor(8, 0);
+  lcd.print("V");
+  lcd.setCursor(10, 0);
+  lcd.write(9);
+  lcd.setCursor(11, 0);
+  lcd.print(PID_TEMP);
+  lcd.setCursor(15, 0);
+  lcd.write(10);
+  lcd.setCursor(0, 1);
+  lcd.print("CUR: ");
+  lcd.setCursor(4, 1);
+  lcd.print(BAT_CURRENT);
+  lcd.setCursor(8, 1);
+  lcd.print("A");
+  lcd.setCursor(11, 1);
+  lcd.write(12);
+  Serial.print(" | BATTERY | ");
+  Serial.print("VOLTAGE: ");
+  Serial.print(BAT_VOLTAGE);
+  Serial.print(" CURRENT: ");
+  Serial.print(BAT_CURRENT);
+  Serial.print(" BATTERY TEMP.: ");
+  Serial.print(PID_TEMP);
+  Serial.println(" °C  |");
+}
 
-    case 0xD9:
-      digitalWrite(MOSFET_2, !digitalRead(MOSFET_2));
-      Serial.println("<OUTPUT 2 Engaged>");
-      break;
+// void IR_MOSFET_Control()
+// {
+//   if (IrReceiver.decode())
+//   {
+//     switch (IrReceiver.decodedIRData.command)
+//     {
+//     case 0x84:
+//       digitalWrite(MOSFET_1, !digitalRead(MOSFET_1));
+//       Serial.println("<OUTPUT 1 Engaged>");
+//       break;
 
-    case 0x89:
-      digitalWrite(BUZZ, !digitalRead(BUZZ));
-      Serial.println("ALARM ON");
-      break;
+//     case 0xD9:
+//       digitalWrite(MOSFET_2, !digitalRead(MOSFET_2));
+//       Serial.println("<OUTPUT 2 Engaged>");
+//       break;
 
-    default:
-      Serial.println(IrReceiver.decodedIRData.command, HEX);
-      //        Serial.println("Default");
-    }
-    IrReceiver.resume(); // Receive the Next Value
-  }
+//     case 0x89:
+//       digitalWrite(BUZZ, !digitalRead(BUZZ));
+//       Serial.println("ALARM ON");
+//       break;
+
+//     default:
+//       Serial.println(IrReceiver.decodedIRData.command, HEX);
+//       //        Serial.println("Default");
+//     }
+//     IrReceiver.resume(); // Receive the Next Value
+//   }
+// }
