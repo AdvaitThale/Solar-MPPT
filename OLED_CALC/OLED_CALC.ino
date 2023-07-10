@@ -17,8 +17,8 @@ float x, y, z;
 void setup() {
   Serial.begin(115200);
   display.begin(0x3C, true); // Address 0x3C default
-  display.setContrast (5);          // dim display
-  display.cp437(true);
+//  display.setContrast (5);          // dim display
+//  display.cp437(true);
   display.display();
   display.clearDisplay();           // Clear the buffer.
   pinMode(VOLT_READ, INPUT);
